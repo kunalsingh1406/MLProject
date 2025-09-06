@@ -1,111 +1,186 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Exam Performance Predictor</title>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #6dd5ed, #2193b0);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column; /* stack content + footer */
+    }
+
+    .container {
+        flex: 1; /* take remaining space */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .login {
+        background: #fff;
+        padding: 40px;
+        border-radius: 15px;
+        width: 550px;
+        max-width: 90%;
+        box-shadow: 0px 6px 20px rgba(0,0,0,0.2);
+        margin: 40px 0;
+    }
+
+    h1 {
+        text-align: center;
+        color: #2193b0;
+        margin-bottom: 20px;
+    }
+    h2 {
+        text-align: center;
+        color: #176278;
+        margin-top: 20px;
+    }
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 6px;
+        color: #333;
+    }
+    select, input[type="number"], input[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 18px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+    input[type="submit"] {
+        background: #2193b0;
+        color: white;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        
+    }
+    input[type="submit"]:hover {
+        background: #176278;
+    }
+    .result-box {
+        background: #f1f8ff;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: bold;
+        color: #176278;
+        font-size: 1.1rem;
+        box-shadow: inset 0px 2px 6px rgba(0,0,0,0.1);
+    }
+    .error-box {
+        background: #ffe0e0;
+        padding: 12px;
+        border-radius: 8px;
+        color: #a10000;
+        text-align: center;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    footer {
+        text-align: center;
+        padding: 15px;
+        background: #222;
+        color: #fff;
+        font-size: 14px;
+    }
+
+    footer a {
+        color: #6dd5fa;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    footer a:hover {
+        text-decoration: underline;
+    }
+    </style>
+</head>
 <body>
-    <div class="login">
-       <h1>Student Exam Performance Indicator</h1>
-   
-       <form action="{{ url_for('predict_datapoint')}}" method="post">
-        <h1>
-            <legend>Student Exam Performance Prediction</legend>
-        </h1>
-        <div class="mb-3">
-            <label class="form-label">Gender</label>
-            <select class="form-control" name="gender" placeholder="Enter you Gender" required>
-                <option class="placeholder" selected disabled value="">Select your Gender</option>
-                <option value="male">
-                    Male
-                </option>
-                <option value="female">
-                    Female
-                </option>
-            </select>
+    <div class="container">
+        <div class="login">
+            <h1>Student Exam Performance Indicator</h1>
+            <form action="{{ url_for('predict_datapoint')}}" method="post">
+                <legend><h2>Prediction Form</h2></legend>
+
+                <label>Gender</label>
+                <select name="gender" required>
+                    <option selected disabled value="">Select your Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+
+                <label>Race or Ethnicity</label>
+                <select name="race_ethnicity" required>
+                    <option selected disabled value="">Select Ethnicity</option>
+                    <option value="group A">Group A</option>
+                    <option value="group B">Group B</option>
+                    <option value="group C">Group C</option>
+                    <option value="group D">Group D</option>
+                    <option value="group E">Group E</option>
+                </select>
+
+                <label>Parental Level of Education</label>
+                <select name="parental_level_of_education" required>
+                    <option selected disabled value="">Select Parent Education</option>
+                    <option value="associate's degree">Associate's Degree</option>
+                    <option value="bachelor's degree">Bachelor's Degree</option>
+                    <option value="high school">High School</option>
+                    <option value="master's degree">Master's Degree</option>
+                    <option value="some college">Some College</option>
+                    <option value="some high school">Some High School</option>
+                </select>
+
+                <label>Lunch Type</label>
+                <select name="lunch" required>
+                    <option selected disabled value="">Select Lunch Type</option>
+                    <option value="free/reduced">Free/Reduced</option>
+                    <option value="standard">Standard</option>
+                </select>
+
+                <label>Test Preparation Course</label>
+                <select name="test_preparation_course" required>
+                    <option selected disabled value="">Select Test Course</option>
+                    <option value="none">None</option>
+                    <option value="completed">Completed</option>
+                </select>
+
+                <label>Reading Score (0 - 100)</label>
+                <input type="number" name="reading_score" min="0" max="100" required>
+
+                <label>Writing Score (0 - 100)</label>
+                <input type="number" name="writing_score" min="0" max="100" required>
+
+                <input type="submit" value="Predict Math Score">
+            </form>
+
+            {% if results %}
+                <div class="result-box">
+                    Predicted Math Score: {{ results }}
+                </div>
+            {% endif %}
+
+            {% if error %}
+                <div class="error-box">
+                    {{ error }}
+                </div>
+            {% endif %}
         </div>
-        <div class="mb-3">
-            <label class="form-label">Race or Ethnicity</label>
-            <select class="form-control" name="race_ethnicity" placeholder="Enter you ethnicity" required>
-                <option class="placeholder" selected disabled value="">Select Ethnicity</option>
-                <option value="group A">
-                    Group A
-                </option>
-                <option value="group B">
-                    Group B
-                </option>
-                <option value="group C">
-                    Group C
-                </option>
-                <option value="group D">
-                    Group D
-                </option>
-                <option value="group E">
-                    Group E
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Parental Level of Education</label>
-            <select class="form-control" name="parental_level_of_education"
-                placeholder="Enter you Parent Education" required>
-                <option class="placeholder" selected disabled value="">Select Parent Education</option>
-                <option value="associate's degree">
-                    associate's degree
-                </option>
-                <option value="bachelor's degree">
-                    bachelor's degree
-                </option>
-                <option value="high school">
-                    high school
-                </option>
-                <option value="master's degree">
-                    master's degree
-                </option>
-                <option value="some college">
-                    some college
-                </option>
-                <option value="some high school">
-                    some high school
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Lunch Type</label>
-            <select class="form-control" name="lunch" placeholder="Enter you Lunch" required>
-                <option class="placeholder" selected disabled value="">Select Lunch Type</option>
-                <option value="free/reduced">
-                    free/reduced
-                </option>
-                <option value="standard">
-                    standard
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Test preparation Course</label>
-            <select class="form-control" name="test_preparation_course" placeholder="Enter you Course"
-                required>
-                <option class="placeholder" selected disabled value="">Select Test_course</option>
-                <option value="none">
-                    None
-                </option>
-                <option value="completed">
-                    Completed
-                </option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Writing Score out of 100</label>
-            <input class="form-control" type="number" name="reading_score"
-                placeholder="Enter your Reading score" min='0' max='100' />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Reading Score out of 100</label>
-            <input class="form-control" type="number" name="writing_score"
-                placeholder="Enter your Reading Score" min='0' max='100' />
-        </div>
-        <div class="mb-3">
-            <input class="btn btn-primary" type="submit" value="Predict your Maths Score" required />
-        </div>
-    </form>
-    <h2>
-       THE  prediction is {{results}}
-    </h2>
-   <body>
+    </div>
+
+    <footer>
+        Made by Kunal • 
+        <a href="https://github.com/kunalsingh1406/MLProject" target="_blank">GitHub</a>
+    </footer>
+</body>
 </html>
